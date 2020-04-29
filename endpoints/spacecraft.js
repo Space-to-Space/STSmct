@@ -17,12 +17,7 @@ function Spacecraft() {
     Object.keys(this.state).forEach(function (k) {
         this.history[k] = [];
     }, this);
-
-    setInterval(function () {
-        this.updateState();
-        this.generateTelemetry();
-    }.bind(this), 1000);
-
+    
     console.log("Example spacecraft launched!");
     console.log("Press Enter to toggle thruster state.");
 
@@ -33,7 +28,15 @@ function Spacecraft() {
         console.log("Thrusters " + this.state["prop.thrusters"]);
         this.generateTelemetry();
     }.bind(this));
+
+    
 };
+
+Spacecraft.prototype.received = function (req, res) {  
+    this.state['prop.fuel'] += req.body.fuel;
+    this.generateTelemetry();
+    res.sendStatus(200);
+}
 
 Spacecraft.prototype.updateState = function () {
     this.state["prop.fuel"] = Math.max(
@@ -81,6 +84,4 @@ Spacecraft.prototype.listen = function (listener) {
     }.bind(this);
 };
 
-module.exports = function () {
-    return new Spacecraft()
-};
+module.exports = Spacecraft;

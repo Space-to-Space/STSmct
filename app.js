@@ -13,7 +13,11 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const request = require('request');
-
+const bodyParser = require('body-parser')
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+})); 
 // Defaults
 options.port = options.port || options.p || 8080;
 options.host = options.host || 'localhost';
@@ -96,7 +100,9 @@ app.get('/dictionary.json', function (req, res) {
     fs.createReadStream('dictionary.json').pipe(res);
 });
 
+app.post("/fuel", spacecraft.received.bind(spacecraft));
+
 // Finally, open the HTTP server and log the instance to the console
-app.listen(options.port, options.host, function () {
+app.listen(8080, '0.0.0.0', function () {
     console.log('Open MCT application running at %s:%s', options.host, options.port)
 });

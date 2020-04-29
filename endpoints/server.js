@@ -18,6 +18,8 @@ function setup() {
         console.log('hi!');
         res.sendStatus(200);
     });
+
+    
 }
 
 module.exports = setup;
