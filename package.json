@@ -2,7 +2,9 @@
   "name": "openmct",
   "version": "1.0.0-snapshot",
   "description": "The Open MCT core platform",
-  "dependencies": {},
+  "dependencies": {
+    "express-ws": "^4.0.0"
+  },
   "devDependencies": {
     "acorn": "6.2.0",
     "angular": "1.4.14",

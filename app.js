@@ -43,7 +43,12 @@ app.use('/proxyUrl', function proxyRequest(req, res, next) {
 const webpack = require('webpack');
 const webpackConfig = require('./webpack.config.js');
 webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
-webpackConfig.plugins.push(function() { this.plugin('watch-run', function(watching, callback) { console.log('Begin compile at ' + new Date()); callback(); }) });
+webpackConfig.plugins.push(function () {
+    this.plugin('watch-run', function (watching, callback) {
+        console.log('Begin compile at ' + new Date());
+        callback();
+    })
+});
 
 webpackConfig.entry.openmct = [
     'webpack-hot-middleware/client?reload=true',
@@ -53,26 +58,45 @@ webpackConfig.entry.openmct = [
 const compiler = webpack(webpackConfig);
 
 app.use(require('webpack-dev-middleware')(
-    compiler,
-    {
+    compiler, {
         publicPath: '/dist',
         logLevel: 'warn'
     }
 ));
 
 app.use(require('webpack-hot-middleware')(
-    compiler,
-    {
+    compiler, {
 
     }
 ));
+
+app.use('/plugins', express.static('./plugins'));
+
+var Spacecraft = require('./endpoints/spacecraft');
+var RealtimeServer = require('./endpoints/realtime-server');
+var HistoryServer = require('./endpoints/history-server');
+
+var expressWs = require('express-ws');
+expressWs(app);
+
+var spacecraft = new Spacecraft();
+var realtimeServer = new RealtimeServer(spacecraft);
+var historyServer = new HistoryServer(spacecraft);
+
+app.use('/realtime', realtimeServer);
+
+app.use('/history', historyServer);
 
 // Expose index.html for development users.
 app.get('/', function (req, res) {
     fs.createReadStream('index.html').pipe(res);
 });
 
+app.get('/dictionary.json', function (req, res) {
+    fs.createReadStream('dictionary.json').pipe(res);
+});
+
 // Finally, open the HTTP server and log the instance to the console
-app.listen(options.port, options.host, function() {
+app.listen(options.port, options.host, function () {
     console.log('Open MCT application running at %s:%s', options.host, options.port)
 });
