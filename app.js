@@ -76,20 +76,12 @@ app.use(require('webpack-hot-middleware')(
 
 app.use('/plugins', express.static('./plugins'));
 
-var Spacecraft = require('./endpoints/spacecraft');
-var RealtimeServer = require('./endpoints/realtime-server');
-var HistoryServer = require('./endpoints/history-server');
 
 var expressWs = require('express-ws');
 expressWs(app);
 
-var spacecraft = new Spacecraft();
-var realtimeServer = new RealtimeServer(spacecraft);
-var historyServer = new HistoryServer(spacecraft);
-
-app.use('/realtime', realtimeServer);
-
-app.use('/history', historyServer);
+const setup = require('./endpoints/server');
+setup(app);
 
 // Expose index.html for development users.
 app.get('/', function (req, res) {
@@ -100,9 +92,5 @@ app.get('/dictionary.json', function (req, res) {
     fs.createReadStream('dictionary.json').pipe(res);
 });
 
-app.post("/fuel", spacecraft.received.bind(spacecraft));
-
 // Finally, open the HTTP server and log the instance to the console
-app.listen(8080, '0.0.0.0', function () {
-    console.log('Open MCT application running at %s:%s', options.host, options.port)
-});
+app.listen(8080);

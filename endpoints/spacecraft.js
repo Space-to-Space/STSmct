@@ -2,6 +2,11 @@
  Spacecraft.js simulates a small spacecraft generating telemetry.
 */
 
+let config = {
+    '1': 'prop.fuel',
+    '2': 'pwr.temp'
+}
+
 function Spacecraft() {
     this.state = {
         "prop.fuel": 77,
@@ -17,19 +22,17 @@ function Spacecraft() {
     Object.keys(this.state).forEach(function (k) {
         this.history[k] = [];
     }, this);
-    
-    console.log("Example spacecraft launched!");
-    console.log("Press Enter to toggle thruster state.");
 
-    process.stdin.on('data', function () {
-        this.state['prop.thrusters'] =
-            (this.state['prop.thrusters'] === "OFF") ? "ON" : "OFF";
-        this.state['comms.recd'] += 32;
-        console.log("Thrusters " + this.state["prop.thrusters"]);
-        this.generateTelemetry();
-    }.bind(this));
+    // console.log("Example spacecraft launched!");
+    // console.log("Press Enter to toggle thruster state.");
 
-    
+    // process.stdin.on('data', function () {
+    //     this.state['prop.thrusters'] =
+    //         (this.state['prop.thrusters'] === "OFF") ? "ON" : "OFF";
+    //     this.state['comms.recd'] += 32;
+    //     console.log("Thrusters " + this.state["prop.thrusters"]);
+    //     this.generateTelemetry();
+    // }.bind(this));
 };
 
 Spacecraft.prototype.received = function (req, res) {  
@@ -54,13 +57,44 @@ Spacecraft.prototype.updateState = function () {
     this.state["pwr.v"] = 30 + Math.pow(Math.random(), 3);
 };
 
+
+
+Spacecraft.prototype.listenCan = function(){
+    console.log("listen can");
+    let byteArrayToLong = function(/*byte[]*/byteArray) {
+        var value = 0;
+        for ( var i = byteArray.length - 1; i >= 0; i--) {
+            value = (value * 256) + byteArray[i];
+        }
+        return value;
+    };
+    console.log("import serialport library");
+    const serialPort = require('serialport');
+    var sp = new serialPort("/dev/ttyUSB0", {
+        baudRate: 115200,
+        parser: serialPort.parsers.Readline
+    });
+    let self = this;
+    sp.on('open', function(){
+        console.log("opened port");
+        sp.on('data', function(data){
+            let d = data.toString().split(' ');
+            let id = d[0];
+            let value = byteArrayToLong(d.splice(0, 2));
+            console.log('value: ' + value + ' | id: ' + config[id] + ' | state: ' + self.state[config[id]]);
+            self.state[config[id]] = value;
+            self.generateTelemetry();
+        });
+    });
+}
+
 /**
  * Takes a measurement of spacecraft state, stores in history, and notifies 
  * listeners.
  */
 Spacecraft.prototype.generateTelemetry = function () {
     var timestamp = Date.now(), sent = 0;
-   
+
     Object.keys(this.state).forEach(function (id) {
         var state = { timestamp: timestamp, value: this.state[id], id: id};
         this.notify(state);
