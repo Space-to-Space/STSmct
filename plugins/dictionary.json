@@ -1,10 +1,10 @@
 {
-    "name": "Example Spacecraft",
+    "name": "Spacecraft",
     "key": "sc",
     "measurements": [
         {
-            "name": "Fuel",
-            "key": "prop.fuel",
+            "name": "Force",
+            "key": "prop.force",
             "values": [
                 {
                     "key": "value",
@@ -12,9 +12,9 @@
                     "units": "kilograms",
                     "format": "float",
                     "min": 0,
-                    "max": 100,
+                    "max": 1000,
                     "hints": {
-                        "range": 10
+                        "range": 1
                     }
                 },
                 {

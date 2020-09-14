@@ -3,7 +3,6 @@ function setup(app) {
     var Spacecraft = require('./spacecraft');
     var RealtimeServer = require('./realtime-server');
     var HistoryServer = require('./history-server');
-    var DataServer = require('./dataServer');
 
     // var expressWs = require('express-ws');
     // var app = require('express')();

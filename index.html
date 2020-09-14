@@ -67,7 +67,7 @@
                 name: "Fixed",
                 timeSystem: 'utc',
                 bounds: {
-                    start: Date.now() - THIRTY_MINUTES,
+                    start: Date.now() - FIVE_MINUTES,
                     end: Date.now()
                 }
             },
@@ -76,7 +76,7 @@
                 timeSystem: 'utc',
                 clock: 'local',
                 clockOffsets: {
-                    start: -THIRTY_MINUTES,
+                    start: -(FIVE_MINUTES/5),
                     end: FIVE_MINUTES
                 }
             }
