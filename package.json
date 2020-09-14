@@ -3,7 +3,10 @@
   "version": "1.0.0-snapshot",
   "description": "The Open MCT core platform",
   "dependencies": {
-    "express-ws": "^4.0.0"
+    "body-parser": "^1.19.0",
+    "express-ws": "^4.0.0",
+    "serialport": "^9.0.1",
+    "socketcan": "^2.8.0"
   },
   "devDependencies": {
     "acorn": "6.2.0",

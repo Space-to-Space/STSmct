@@ -13,7 +13,11 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const request = require('request');
-
+const bodyParser = require('body-parser')
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+})); 
 // Defaults
 options.port = options.port || options.p || 8080;
 options.host = options.host || 'localhost';
@@ -72,20 +76,12 @@ app.use(require('webpack-hot-middleware')(
 
 app.use('/plugins', express.static('./plugins'));
 
-var Spacecraft = require('./endpoints/spacecraft');
-var RealtimeServer = require('./endpoints/realtime-server');
-var HistoryServer = require('./endpoints/history-server');
 
 var expressWs = require('express-ws');
 expressWs(app);
 
-var spacecraft = new Spacecraft();
-var realtimeServer = new RealtimeServer(spacecraft);
-var historyServer = new HistoryServer(spacecraft);
-
-app.use('/realtime', realtimeServer);
-
-app.use('/history', historyServer);
+const setup = require('./endpoints/server');
+setup(app);
 
 // Expose index.html for development users.
 app.get('/', function (req, res) {
@@ -97,6 +93,4 @@ app.get('/dictionary.json', function (req, res) {
 });
 
 // Finally, open the HTTP server and log the instance to the console
-app.listen(options.port, options.host, function () {
-    console.log('Open MCT application running at %s:%s', options.host, options.port)
-});
+app.listen(8080);

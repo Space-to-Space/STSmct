@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 function RealtimeServer(spacecraft) {
-
+    
     router.ws('/', function (ws) {
         var unlisten = spacecraft.listen(notifySubscribers);
         var subscribed = {}; // Active subscriptions for this connection

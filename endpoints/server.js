@@ -1,18 +1,18 @@
-function setup() {
+function setup(app) {
+    console.log("setup");
     var Spacecraft = require('./spacecraft');
     var RealtimeServer = require('./realtime-server');
     var HistoryServer = require('./history-server');
 
-    var expressWs = require('express-ws');
-    var app = require('express')();
-    expressWs(app);
+    // var expressWs = require('express-ws');
+    // var app = require('express')();
+    // expressWs(app);
 
     var spacecraft = new Spacecraft();
     var realtimeServer = new RealtimeServer(spacecraft);
     var historyServer = new HistoryServer(spacecraft);
-
     app.use('/realtime', realtimeServer);
-
+    spacecraft.listenCan();
     console.log('route');
     app.use('/history', function(req, res){
         console.log('hi!');
