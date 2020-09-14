@@ -9,7 +9,7 @@
     "socketcan": "^2.8.0"
   },
   "devDependencies": {
-    "acorn": "6.2.0",
+    "acorn": "8.0.1",
     "angular": "1.4.14",
     "angular-route": "1.4.14",
     "babel-eslint": "8.2.6",
